@@ -1,0 +1,20 @@
+[project]
+name = "view-cif"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "TomiiLabo", email = "w235434d@yokohama-cu.ac.jp" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "gemmi>=0.7.0",
+    "typer>=0.15.2",
+]
+
+[project.scripts]
+view-cif = "view_cif:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
