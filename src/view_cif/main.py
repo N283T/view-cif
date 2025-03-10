@@ -53,9 +53,14 @@ def view_cif(
                             os.getenv('MONOMERS'), 'components.cif.gz'
                         )).as_string()
             
+    elif ccd_def:
+        doc = read_cif(
+                get_cif_path(cont.upper(), os.getenv('PRD_DIR'))
+            ).as_string()
+            
     else:
         doc = read_cif(
-                get_cif_path(cont, os.getenv('LIGAND_DIR'))
+                get_cif_path(cont.upper(), os.getenv('CHEM_COMP'))
             ).as_string()
         
     with open(output, 'w') as f:
