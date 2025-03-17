@@ -19,11 +19,11 @@ def get_cif_path(cont: str, target_dir: str) -> str:
         raise FileNotFoundError(f'File {cont}.cif not found in {target_dir}')
 
 
-
 def view_cif(
         cont: Annotated[str, typer.Argument(help="The name of the CIF file to view")],
-        target_dir: Annotated[str, typer.Argument(help="The directory to search for the CIF file")]=None,
+        target_dir: Annotated[str|None, typer.Argument(help="The directory to search for the CIF file")]=None,
         ccd_def: Annotated[bool, typer.Option('--ccd-definition', '-d', help="CCD File (definition file type)")]=False,
+        next_gen: Annotated[bool, typer.Option('--next-gen', '-n', help="pdb_next_gen file")]=False
     ):
     
     output = os.path.join(TEMP_DIR, os.path.basename(cont) + '.cif')
@@ -38,29 +38,41 @@ def view_cif(
     
     # cont is a pdb code
     elif is_pdb_code(cont):
-        doc = read_cif(expand_if_pdb_code(cont)).as_string()
+        if next_gen:
+            next_gen_id = 'pdb_'+ cont.zfill(8)
+            path = os.path.join(
+                        os.getenv('PDB_NEXT_GEN', ''),
+                        'data/entries/divided',
+                        cont[1:3],
+                        next_gen_id,
+                        next_gen_id + '_xyz-enrich.cif.gz'
+                    )
+            output = os.path.join(TEMP_DIR, next_gen_id + '_xyz-enrich.cif')
+            doc = read_cif(path).as_string()
+        else:
+            doc = read_cif(expand_if_pdb_code(cont)).as_string()
     
     # cont is prdcc or prd or clc or ccd
     elif cont.lower() in ('prd', 'ccd'):
         if cont == 'prd':
-            prd_dir = os.path.join(os.getenv('BIRD'), 'prd')
+            prd_dir = os.path.join(os.getenv('BIRD', ''), 'prd')
             if ccd_def:
                 doc = read_cif(os.path.join(prd_dir, 'prd-all.cif.gz')).as_string()
             else:
                 doc = read_cif(os.path.join(prd_dir, 'prdcc-all.cif.gz')).as_string()
         else:
             doc = read_cif(os.path.join(
-                            os.getenv('MONOMERS'), 'components.cif.gz'
+                            os.getenv('MONOMERS', ''), 'components.cif.gz'
                         )).as_string()
             
     elif ccd_def:
         doc = read_cif(
-                get_cif_path(cont.upper(), os.getenv('PRD_DIR'))
+                get_cif_path(cont.upper(), os.getenv('PRD_DIR', ''))
             ).as_string()
             
     else:
         doc = read_cif(
-                get_cif_path(cont.upper(), os.getenv('CHEM_COMP'))
+                get_cif_path(cont.upper(), os.getenv('CHEM_COMP', ''))
             ).as_string()
         
     with open(output, 'w') as f:
