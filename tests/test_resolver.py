@@ -1,7 +1,7 @@
 """Tests for resolver module."""
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -94,8 +94,12 @@ class TestResolveCif:
         mock_read.assert_called_once_with(
             str(
                 Path("/data/pdb").joinpath(
-                    "data", "entries", "divided", "ab",
-                    "pdb_00001abc", "pdb_00001abc_xyz-enrich.cif.gz",
+                    "data",
+                    "entries",
+                    "divided",
+                    "ab",
+                    "pdb_00001abc",
+                    "pdb_00001abc_xyz-enrich.cif.gz",
                 )
             )
         )
