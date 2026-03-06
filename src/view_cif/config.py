@@ -34,7 +34,9 @@ class Config:
 
 def _config_from_dict(data: dict) -> Config:
     paths_data = data.get("paths", {})
-    paths = PathsConfig(**{k: v for k, v in paths_data.items() if k in PathsConfig.__dataclass_fields__})
+    paths = PathsConfig(
+        **{k: v for k, v in paths_data.items() if k in PathsConfig.__dataclass_fields__}
+    )
     return Config(
         editor=data.get("editor", "code"),
         cache_dir=data.get("cache_dir", str(DEFAULT_CACHE_DIR)),
@@ -62,13 +64,28 @@ def load_config(config_file: Path = CONFIG_FILE) -> Config:
         save_config(config, config_file)
         return config
 
-    with open(config_file) as f:
-        data = yaml.safe_load(f) or {}
+    try:
+        with open(config_file) as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise SystemExit(
+            f"Error: Config file {config_file} contains invalid YAML:\n{e}"
+        ) from e
+    except OSError as e:
+        raise SystemExit(f"Error: Cannot read config file {config_file}: {e}") from e
+
+    if data is None:
+        return Config()
 
     return _config_from_dict(data)
 
 
 def save_config(config: Config, config_file: Path = CONFIG_FILE) -> None:
-    config_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(config_file, "w") as f:
-        yaml.dump(_config_to_dict(config), f, default_flow_style=False, sort_keys=False)
+    try:
+        config_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(config_file, "w") as f:
+            yaml.dump(
+                _config_to_dict(config), f, default_flow_style=False, sort_keys=False
+            )
+    except OSError as e:
+        raise SystemExit(f"Error: Cannot write config file {config_file}: {e}") from e
