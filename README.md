@@ -15,7 +15,11 @@ CLI tool to view CIF files from various sources in your preferred editor.
 Requires Python 3.12+.
 
 ```bash
-uv tool install git+https://github.com/N283T/view_cif.git
+# From PyPI
+pip install view-cif
+
+# Or with uv
+uv tool install view-cif
 ```
 
 ## Usage
@@ -92,4 +96,4 @@ uv run ruff check .
 
 ## License
 
-MIT
+[MIT](LICENSE)
