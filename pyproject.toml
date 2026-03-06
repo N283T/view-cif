@@ -1,7 +1,7 @@
 [project]
 name = "view-cif"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "CLI tool to view CIF files from various sources in your editor"
 readme = "README.md"
 authors = [
     { name = "TomiiLabo", email = "w235434d@yokohama-cu.ac.jp" }
@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "gemmi>=0.7.0",
     "typer>=0.15.2",
+    "pyyaml>=6.0",
 ]
 
 [project.scripts]
@@ -19,6 +20,11 @@ view-cif = "view_cif:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[[tool.mypy.overrides]]
-module = ['typer']
-ignore_missing_imports = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+]
