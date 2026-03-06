@@ -15,9 +15,7 @@ CLI tool to view CIF files from various sources in your preferred editor.
 Requires Python 3.12+.
 
 ```bash
-git clone https://github.com/N283T/view_cif.git
-cd view_cif
-uv sync
+uv tool install git+https://github.com/N283T/view_cif.git
 ```
 
 ## Usage
