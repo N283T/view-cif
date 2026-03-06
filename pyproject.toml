@@ -1,6 +1,6 @@
 [project]
 name = "view-cif"
-version = "0.2.0"
+version = "0.2.1"
 description = "CLI tool to view CIF files from various sources in your editor"
 readme = "README.md"
 license = "MIT"

@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.2.1] - 2026-03-07
+
+### Added
+
+- `view-cif config show` and `view-cif config set` CLI commands
+- CI test matrix (Python 3.12/3.13/3.14 × ubuntu/macos)
+- Auto-generated GitHub Releases from CHANGELOG
+- README badges (PyPI, Python versions, test status, license)
+- MIT LICENSE file
+- Python 3.13/3.14 support
+
+### Changed
+
+- `view-cif <arg>` shorthand preserved alongside subcommands
+
 ## [0.2.0] - 2026-03-07
 
 ### Added
