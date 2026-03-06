@@ -5,7 +5,7 @@ description = "CLI tool to view CIF files from various sources in your editor"
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "TomiiLabo", email = "w235434d@yokohama-cu.ac.jp" }
+    { name = "N283T", email = "w255508b@yokohama-cu.ac.jp" }
 ]
 requires-python = ">=3.12"
 classifiers = [
