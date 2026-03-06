@@ -1,7 +1,8 @@
 """CLI definition for view-cif."""
 
+from typing import Annotated
+
 import typer
-from typing_extensions import Annotated
 
 from .config import (
     CONFIG_FILE,
