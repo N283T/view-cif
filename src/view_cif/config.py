@@ -1,0 +1,91 @@
+"""Configuration management for view-cif."""
+
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import yaml
+
+
+CONFIG_DIR = Path.home().joinpath(".config", "view-cif")
+CONFIG_FILE = CONFIG_DIR.joinpath("config.yaml")
+
+DEFAULT_CACHE_DIR = Path.home().joinpath(".cache", "view-cif")
+
+
+@dataclass(frozen=True)
+class PathsConfig:
+    pdb_next_gen: str = ""
+    bird: str = ""
+    monomers: str = ""
+    chem_comp: str = ""
+    prd: str = ""
+
+
+@dataclass(frozen=True)
+class Config:
+    editor: str = "code"
+    cache_dir: str = str(DEFAULT_CACHE_DIR)
+    paths: PathsConfig = field(default_factory=PathsConfig)
+
+    @property
+    def cache_path(self) -> Path:
+        return Path(self.cache_dir).expanduser()
+
+
+def _config_from_dict(data: dict) -> Config:
+    paths_data = data.get("paths", {})
+    paths = PathsConfig(
+        **{k: v for k, v in paths_data.items() if k in PathsConfig.__dataclass_fields__}
+    )
+    return Config(
+        editor=data.get("editor", "code"),
+        cache_dir=data.get("cache_dir", str(DEFAULT_CACHE_DIR)),
+        paths=paths,
+    )
+
+
+def _config_to_dict(config: Config) -> dict:
+    return {
+        "editor": config.editor,
+        "cache_dir": config.cache_dir,
+        "paths": {
+            "pdb_next_gen": config.paths.pdb_next_gen,
+            "bird": config.paths.bird,
+            "monomers": config.paths.monomers,
+            "chem_comp": config.paths.chem_comp,
+            "prd": config.paths.prd,
+        },
+    }
+
+
+def load_config(config_file: Path = CONFIG_FILE) -> Config:
+    if not config_file.exists():
+        config = Config()
+        save_config(config, config_file)
+        return config
+
+    try:
+        with open(config_file) as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise SystemExit(
+            f"Error: Config file {config_file} contains invalid YAML:\n{e}"
+        ) from e
+    except OSError as e:
+        raise SystemExit(f"Error: Cannot read config file {config_file}: {e}") from e
+
+    if data is None:
+        return Config()
+
+    return _config_from_dict(data)
+
+
+def save_config(config: Config, config_file: Path = CONFIG_FILE) -> None:
+    try:
+        config_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(config_file, "w") as f:
+            yaml.dump(
+                _config_to_dict(config), f, default_flow_style=False, sort_keys=False
+            )
+    except OSError as e:
+        raise SystemExit(f"Error: Cannot write config file {config_file}: {e}") from e
