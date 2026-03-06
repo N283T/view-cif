@@ -3,15 +3,30 @@ name = "view-cif"
 version = "0.2.0"
 description = "CLI tool to view CIF files from various sources in your editor"
 readme = "README.md"
+license = "MIT"
 authors = [
-    { name = "TomiiLabo", email = "w235434d@yokohama-cu.ac.jp" }
+    { name = "N283T", email = "w255508b@yokohama-cu.ac.jp" }
 ]
 requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
 dependencies = [
     "gemmi>=0.7.0",
     "typer>=0.15.2",
     "pyyaml>=6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/N283T/view-cif"
+Repository = "https://github.com/N283T/view-cif"
+Changelog = "https://github.com/N283T/view-cif/blob/main/CHANGELOG.md"
 
 [project.scripts]
 view-cif = "view_cif:main"
