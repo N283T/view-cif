@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.2.2] - 2026-03-07
+
+### Fixed
+
+- Replace `typing_extensions.Annotated` with `typing.Annotated` (stdlib in Python 3.12+)
+
 ## [0.2.1] - 2026-03-07
 
 ### Added
