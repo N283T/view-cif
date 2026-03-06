@@ -1,5 +1,10 @@
 # view-cif
 
+[![PyPI](https://img.shields.io/pypi/v/view-cif)](https://pypi.org/project/view-cif/)
+[![Python](https://img.shields.io/pypi/pyversions/view-cif)](https://pypi.org/project/view-cif/)
+[![Test](https://github.com/N283T/view-cif/actions/workflows/test.yml/badge.svg)](https://github.com/N283T/view-cif/actions/workflows/test.yml)
+[![License](https://img.shields.io/github/license/N283T/view-cif)](LICENSE)
+
 CLI tool to view CIF files from various sources in your preferred editor.
 
 ## Features
