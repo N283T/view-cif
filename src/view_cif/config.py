@@ -80,6 +80,29 @@ def load_config(config_file: Path = CONFIG_FILE) -> Config:
     return _config_from_dict(data)
 
 
+VALID_TOP_KEYS = {"editor", "cache_dir"}
+VALID_PATH_KEYS = set(PathsConfig.__dataclass_fields__)
+
+
+def update_config(config: Config, key: str, value: str) -> Config:
+    data = _config_to_dict(config)
+
+    if "." in key:
+        section, subkey = key.split(".", 1)
+        if section != "paths" or subkey not in VALID_PATH_KEYS:
+            valid = ", ".join(f"paths.{k}" for k in sorted(VALID_PATH_KEYS))
+            raise SystemExit(f"Error: Unknown key '{key}'. Valid path keys: {valid}")
+        return _config_from_dict({**data, "paths": {**data["paths"], subkey: value}})
+
+    if key not in VALID_TOP_KEYS:
+        valid = ", ".join(sorted(VALID_TOP_KEYS))
+        raise SystemExit(
+            f"Error: Unknown key '{key}'. Valid keys: {valid}, paths.<name>"
+        )
+
+    return _config_from_dict({**data, key: value})
+
+
 def save_config(config: Config, config_file: Path = CONFIG_FILE) -> None:
     try:
         config_file.parent.mkdir(parents=True, exist_ok=True)

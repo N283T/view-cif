@@ -1,9 +1,13 @@
 """view-cif: CLI tool to view CIF files from various sources."""
 
-import typer
+import sys
 
-from .cli import view_cif
+from .cli import app
+
+SUBCOMMANDS = {"config", "--help", "--show-completion", "--install-completion"}
 
 
 def main():
-    typer.run(view_cif)
+    if len(sys.argv) > 1 and sys.argv[1] not in SUBCOMMANDS:
+        sys.argv.insert(1, "view")
+    app()

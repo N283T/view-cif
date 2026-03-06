@@ -4,6 +4,8 @@ from pathlib import Path
 
 import yaml
 
+import pytest
+
 from view_cif.config import (
     Config,
     PathsConfig,
@@ -11,6 +13,7 @@ from view_cif.config import (
     _config_to_dict,
     load_config,
     save_config,
+    update_config,
 )
 
 
@@ -80,3 +83,29 @@ class TestLoadSaveConfig:
         config = load_config(config_file)
         assert config.editor == "nano"
         assert config.paths.pdb_next_gen == ""
+
+
+class TestUpdateConfig:
+    def test_update_top_level_key(self):
+        config = Config()
+        updated = update_config(config, "editor", "nvim")
+        assert updated.editor == "nvim"
+        assert updated.cache_dir == config.cache_dir
+
+    def test_update_path_key(self):
+        config = Config()
+        updated = update_config(config, "paths.chem_comp", "/data/chem_comp")
+        assert updated.paths.chem_comp == "/data/chem_comp"
+        assert updated.editor == config.editor
+
+    def test_rejects_unknown_top_key(self):
+        with pytest.raises(SystemExit, match="Unknown key 'bogus'"):
+            update_config(Config(), "bogus", "value")
+
+    def test_rejects_unknown_path_key(self):
+        with pytest.raises(SystemExit, match="Unknown key 'paths.bogus'"):
+            update_config(Config(), "paths.bogus", "value")
+
+    def test_rejects_invalid_section(self):
+        with pytest.raises(SystemExit, match="Unknown key 'foo.bar'"):
+            update_config(Config(), "foo.bar", "value")
