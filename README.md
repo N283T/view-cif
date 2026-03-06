@@ -49,23 +49,27 @@ view-cif prd --ccd-definition
 
 ## Configuration
 
-On first run, a default config is created at `~/.config/view-cif/config.yaml`:
+On first run, a default config is created at `~/.config/view-cif/config.yaml`.
 
-```yaml
-editor: code
-cache_dir: ~/.cache/view-cif
+### Managing config via CLI
 
-paths:
-  pdb_next_gen: ""
-  bird: ""
-  monomers: ""
-  chem_comp: ""
-  prd: ""
+```bash
+# Show current configuration
+view-cif config show
+
+# Change editor
+view-cif config set editor nvim
+
+# Set data paths
+view-cif config set paths.chem_comp /data/chem_comp
+view-cif config set paths.monomers /data/monomers
 ```
+
+### Config keys
 
 | Key | Description |
 |:----|:------------|
-| `editor` | Editor command to open CIF files (e.g., `code`, `vim`, `emacs`) |
+| `editor` | Editor command to open CIF files (e.g., `code`, `nvim`, `emacs`) |
 | `cache_dir` | Directory for cached CIF output |
 | `paths.pdb_next_gen` | Root directory for next-gen PDB files |
 | `paths.bird` | Root directory for BIRD (PRD) data |
