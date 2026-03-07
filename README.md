@@ -96,6 +96,11 @@ view-cif config set paths.prd /data/bird
 
 ### Directory structure expectations
 
+Path resolution follows the [PDB FTP/rsync mirror](https://www.wwpdb.org/ftp/pdb-ftp-sites) directory layout.
+If you maintain a local mirror, point each config path to the corresponding directory.
+
+`~` and environment variables (`$HOME`, `$PDB_ROOT`, etc.) are expanded automatically.
+
 ```
 paths.pdb_next_gen/
   entries/divided/{ab}/pdb_{id}/pdb_{id}_xyz-enrich.cif.gz

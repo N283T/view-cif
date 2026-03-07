@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.2.3] - 2026-03-07
+
+### Added
+
+- BIRD individual file lookup with prefix auto-detection (`PRD_`, `PRDCC_`, `FAM_`)
+- Separate `view-cif prd` and `view-cif prdcc` bulk commands
+- Support for `~` and environment variables (`$HOME`, etc.) in config paths
+- `config.example.yaml` template with comments
+
+### Changed
+
+- CI optimized: skip docs-only changes, reduce matrix for PR/push (full matrix on release)
+
+### Removed
+
+- `--ccd-definition` / `-d` flag (replaced by prefix auto-detection)
+
 ## [0.2.2] - 2026-03-07
 
 ### Fixed
