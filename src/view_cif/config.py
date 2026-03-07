@@ -1,9 +1,17 @@
 """Configuration management for view-cif."""
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+
+
+def _expand_path(value: str) -> str:
+    """Expand ~ and environment variables in a path string."""
+    if not value:
+        return value
+    return str(Path(os.path.expandvars(value)).expanduser())
 
 
 CONFIG_DIR = Path.home().joinpath(".config", "view-cif")
@@ -35,7 +43,11 @@ class Config:
 def _config_from_dict(data: dict) -> Config:
     paths_data = data.get("paths", {})
     paths = PathsConfig(
-        **{k: v for k, v in paths_data.items() if k in PathsConfig.__dataclass_fields__}
+        **{
+            k: _expand_path(v)
+            for k, v in paths_data.items()
+            if k in PathsConfig.__dataclass_fields__
+        }
     )
     return Config(
         editor=data.get("editor", "code"),
