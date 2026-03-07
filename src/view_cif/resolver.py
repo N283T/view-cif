@@ -70,18 +70,17 @@ def _resolve_pdb_code(cont: str, next_gen: bool, paths: PathsConfig) -> tuple[st
     return content, cont + ".cif"
 
 
-_BIRD_PREFIXES = {
-    "PRD_": "prd",
-    "PRDCC_": "prdcc",
-    "FAM_": "family",
-}
+_BIRD_PREFIXES = (
+    ("PRDCC_", "prdcc"),
+    ("PRD_", "prd"),
+    ("FAM_", "family"),
+)
 
 
 def _bird_subdir(name: str) -> str | None:
     """Return bird subdirectory name if name matches a known prefix."""
     upper = name.upper()
-    # Check longest prefixes first to avoid PRDCC_ matching PRD_
-    for prefix, subdir in sorted(_BIRD_PREFIXES.items(), key=lambda x: -len(x[0])):
+    for prefix, subdir in _BIRD_PREFIXES:
         if upper.startswith(prefix):
             return subdir
     return None
@@ -91,6 +90,10 @@ def _resolve_bird_individual(cont: str, paths: PathsConfig) -> tuple[str, str]:
     """Resolve an individual BIRD file (PRD/PRDCC/FAM)."""
     _require_path(paths.prd, "prd")
     subdir = _bird_subdir(cont)
+    if subdir is None:
+        raise SystemExit(
+            f"Error: '{cont}' is not a recognized BIRD identifier (PRD_/PRDCC_/FAM_)"
+        )
     search_dir = str(Path(paths.prd).joinpath(subdir))
     path = _find_cif_file(cont.upper(), search_dir)
     return _safe_read_cif(str(path)), cont.upper() + ".cif"

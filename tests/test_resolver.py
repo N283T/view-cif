@@ -271,6 +271,11 @@ class TestResolveCif:
         with pytest.raises(SystemExit, match="bird"):
             resolve_cif("prd", PathsConfig())
 
+    @patch("view_cif.resolver.is_pdb_code", return_value=False)
+    def test_resolve_prdcc_bulk_missing_path(self, mock_is_pdb):
+        with pytest.raises(SystemExit, match="bird"):
+            resolve_cif("prdcc", PathsConfig())
+
     @patch("view_cif.resolver._safe_read_cif")
     @patch("view_cif.resolver.is_pdb_code", return_value=False)
     def test_resolve_chem_comp_lookup(self, mock_is_pdb, mock_read, tmp_path: Path):

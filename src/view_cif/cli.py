@@ -22,7 +22,10 @@ app.add_typer(config_app, name="config")
 @app.command()
 def view(
     cont: Annotated[
-        str, typer.Argument(help="CIF file path, PDB code, or compound name")
+        str,
+        typer.Argument(
+            help="CIF file path, PDB code, BIRD ID (PRD_/PRDCC_/FAM_), or compound name"
+        ),
     ],
     target_dir: Annotated[
         str | None, typer.Argument(help="Directory to search for the CIF file")
