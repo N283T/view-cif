@@ -11,6 +11,7 @@ from view_cif.config import (
     PathsConfig,
     _config_from_dict,
     _config_to_dict,
+    _expand_path,
     load_config,
     save_config,
     update_config,
@@ -109,3 +110,40 @@ class TestUpdateConfig:
     def test_rejects_invalid_section(self):
         with pytest.raises(SystemExit, match="Unknown key 'foo.bar'"):
             update_config(Config(), "foo.bar", "value")
+
+
+class TestExpandPath:
+    def test_empty_string_unchanged(self):
+        assert _expand_path("") == ""
+
+    def test_absolute_path_unchanged(self):
+        assert _expand_path("/data/pdb") == "/data/pdb"
+
+    def test_tilde_expanded(self):
+        result = _expand_path("~/pdb/data")
+        assert not result.startswith("~")
+        assert result.endswith("/pdb/data")
+
+    def test_env_var_expanded(self, monkeypatch):
+        monkeypatch.setenv("MY_DATA", "/opt/data")
+        assert _expand_path("$MY_DATA/pdb") == "/opt/data/pdb"
+
+    def test_tilde_and_env_var_combined(self, monkeypatch):
+        monkeypatch.setenv("SUBDIR", "pdb")
+        result = _expand_path("~/$SUBDIR/data")
+        assert not result.startswith("~")
+        assert result.endswith("/pdb/data")
+
+
+class TestConfigFromDictPathExpansion:
+    def test_paths_expand_tilde(self):
+        data = {"paths": {"bird": "~/pdb/bird"}}
+        config = _config_from_dict(data)
+        assert not config.paths.bird.startswith("~")
+        assert config.paths.bird.endswith("/pdb/bird")
+
+    def test_paths_expand_env_var(self, monkeypatch):
+        monkeypatch.setenv("PDB_ROOT", "/data/pdb")
+        data = {"paths": {"monomers": "$PDB_ROOT/monomers"}}
+        config = _config_from_dict(data)
+        assert config.paths.monomers == "/data/pdb/monomers"
