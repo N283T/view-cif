@@ -202,7 +202,9 @@ class TestResolveCif:
 
     @patch("view_cif.resolver._safe_read_cif")
     @patch("view_cif.resolver.is_pdb_code", return_value=False)
-    def test_resolve_bird_case_insensitive(self, mock_is_pdb, mock_read, tmp_path: Path):
+    def test_resolve_bird_case_insensitive(
+        self, mock_is_pdb, mock_read, tmp_path: Path
+    ):
         prd_dir = tmp_path.joinpath("prd", "0")
         prd_dir.mkdir(parents=True)
         cif_file = prd_dir.joinpath("PRD_000010.cif")
