@@ -27,9 +27,6 @@ def view(
     target_dir: Annotated[
         str | None, typer.Argument(help="Directory to search for the CIF file")
     ] = None,
-    ccd_def: Annotated[
-        bool, typer.Option("--ccd-definition", "-d", help="CCD definition file type")
-    ] = False,
     next_gen: Annotated[
         bool, typer.Option("--next-gen", "-n", help="Use pdb_next_gen file")
     ] = False,
@@ -44,7 +41,6 @@ def view(
             cont,
             config.paths,
             target_dir=target_dir,
-            ccd_def=ccd_def,
             next_gen=next_gen,
         )
 

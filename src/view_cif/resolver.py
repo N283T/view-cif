@@ -70,12 +70,40 @@ def _resolve_pdb_code(cont: str, next_gen: bool, paths: PathsConfig) -> tuple[st
     return content, cont + ".cif"
 
 
-def _resolve_prd(ccd_def: bool, paths: PathsConfig) -> str:
+_BIRD_PREFIXES = {
+    "PRD_": "prd",
+    "PRDCC_": "prdcc",
+    "FAM_": "family",
+}
+
+
+def _bird_subdir(name: str) -> str | None:
+    """Return bird subdirectory name if name matches a known prefix."""
+    upper = name.upper()
+    # Check longest prefixes first to avoid PRDCC_ matching PRD_
+    for prefix, subdir in sorted(_BIRD_PREFIXES.items(), key=lambda x: -len(x[0])):
+        if upper.startswith(prefix):
+            return subdir
+    return None
+
+
+def _resolve_bird_individual(cont: str, paths: PathsConfig) -> tuple[str, str]:
+    """Resolve an individual BIRD file (PRD/PRDCC/FAM)."""
+    _require_path(paths.prd, "prd")
+    subdir = _bird_subdir(cont)
+    search_dir = str(Path(paths.prd).joinpath(subdir))
+    path = _find_cif_file(cont.upper(), search_dir)
+    return _safe_read_cif(str(path)), cont.upper() + ".cif"
+
+
+def _resolve_prd_bulk(paths: PathsConfig) -> str:
     _require_path(paths.bird, "bird")
-    prd_dir = Path(paths.bird)
-    if ccd_def:
-        return _safe_read_cif(str(prd_dir.joinpath("prd-all.cif.gz")))
-    return _safe_read_cif(str(prd_dir.joinpath("prdcc-all.cif.gz")))
+    return _safe_read_cif(str(Path(paths.bird).joinpath("prd-all.cif.gz")))
+
+
+def _resolve_prdcc_bulk(paths: PathsConfig) -> str:
+    _require_path(paths.bird, "bird")
+    return _safe_read_cif(str(Path(paths.bird).joinpath("prdcc-all.cif.gz")))
 
 
 def _resolve_ccd(paths: PathsConfig) -> str:
@@ -88,7 +116,6 @@ def resolve_cif(
     paths: PathsConfig,
     *,
     target_dir: str | None = None,
-    ccd_def: bool = False,
     next_gen: bool = False,
 ) -> tuple[str, str]:
     """Resolve a CIF identifier to (content, output_filename).
@@ -113,19 +140,21 @@ def resolve_cif(
     if is_pdb_code(cont):
         return _resolve_pdb_code(cont, next_gen, paths)
 
-    # PRD or CCD bulk files
+    # BIRD individual lookup (PRD_*, PRDCC_*, FAM_*)
+    if _bird_subdir(cont):
+        return _resolve_bird_individual(cont, paths)
+
+    # Bulk files
     if cont.lower() == "prd":
-        return _resolve_prd(ccd_def, paths), "prd.cif"
+        return _resolve_prd_bulk(paths), "prd.cif"
+
+    if cont.lower() == "prdcc":
+        return _resolve_prdcc_bulk(paths), "prdcc.cif"
 
     if cont.lower() == "ccd":
         return _resolve_ccd(paths), "ccd.cif"
 
-    # CCD definition or chemical component lookup
-    if ccd_def:
-        _require_path(paths.prd, "prd")
-        path = _find_cif_file(cont.upper(), paths.prd)
-        return _safe_read_cif(str(path)), default_filename
-
+    # Chemical component lookup
     _require_path(paths.chem_comp, "chem_comp")
     path = _find_cif_file(cont.upper(), paths.chem_comp)
     return _safe_read_cif(str(path)), default_filename
