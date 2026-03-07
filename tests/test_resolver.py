@@ -31,6 +31,22 @@ class TestFindCifFile:
         result = _find_cif_file("ABC", str(tmp_path))
         assert result == gz_file
 
+    def test_finds_nested_cif(self, tmp_path: Path):
+        nested = tmp_path.joinpath("P", "ABC")
+        nested.mkdir(parents=True)
+        cif_file = nested.joinpath("ABC.cif")
+        cif_file.write_text("data_ABC")
+        result = _find_cif_file("ABC", str(tmp_path))
+        assert result == cif_file
+
+    def test_finds_nested_flat_cif(self, tmp_path: Path):
+        nested = tmp_path.joinpath("9")
+        nested.mkdir()
+        cif_file = nested.joinpath("ABC.cif")
+        cif_file.write_text("data_ABC")
+        result = _find_cif_file("ABC", str(tmp_path))
+        assert result == cif_file
+
     def test_raises_on_missing(self, tmp_path: Path):
         with pytest.raises(SystemExit, match="ABC.cif not found"):
             _find_cif_file("ABC", str(tmp_path))
@@ -94,7 +110,6 @@ class TestResolveCif:
         mock_read.assert_called_once_with(
             str(
                 Path("/data/pdb").joinpath(
-                    "data",
                     "entries",
                     "divided",
                     "ab",
@@ -121,7 +136,7 @@ class TestResolveCif:
         assert content == "prdcc_data"
         assert filename == "prd.cif"
         mock_read.assert_called_once_with(
-            str(Path("/data/bird").joinpath("prd", "prdcc-all.cif.gz"))
+            str(Path("/data/bird").joinpath("prdcc-all.cif.gz"))
         )
 
     @patch("view_cif.resolver._safe_read_cif")
@@ -135,7 +150,7 @@ class TestResolveCif:
         assert content == "prd_data"
         assert filename == "prd.cif"
         mock_read.assert_called_once_with(
-            str(Path("/data/bird").joinpath("prd", "prd-all.cif.gz"))
+            str(Path("/data/bird").joinpath("prd-all.cif.gz"))
         )
 
     @patch("view_cif.resolver._safe_read_cif")

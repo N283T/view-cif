@@ -27,10 +27,18 @@ def _safe_read_cif(path: str) -> str:
 
 def _find_cif_file(name: str, directory: str) -> Path:
     dir_path = Path(directory)
+    # Flat: {dir}/{name}.cif
     for ext in (".cif", ".cif.gz"):
         candidate = dir_path.joinpath(name + ext)
         if candidate.exists():
             return candidate
+    # Nested: {dir}/**/{name}/{name}.cif (PDB mirror structure)
+    matches = list(dir_path.glob(f"**/{name}/{name}.cif"))
+    if matches:
+        return matches[0]
+    matches = list(dir_path.glob(f"**/{name}.cif"))
+    if matches:
+        return matches[0]
     raise SystemExit(f"Error: File {name}.cif not found in {directory}")
 
 
@@ -49,7 +57,6 @@ def _resolve_pdb_code(cont: str, next_gen: bool, paths: PathsConfig) -> tuple[st
         _require_path(paths.pdb_next_gen, "pdb_next_gen")
         next_gen_id = "pdb_" + cont.zfill(8)
         path = Path(paths.pdb_next_gen).joinpath(
-            "data",
             "entries",
             "divided",
             cont[1:3],
@@ -65,7 +72,7 @@ def _resolve_pdb_code(cont: str, next_gen: bool, paths: PathsConfig) -> tuple[st
 
 def _resolve_prd(ccd_def: bool, paths: PathsConfig) -> str:
     _require_path(paths.bird, "bird")
-    prd_dir = Path(paths.bird).joinpath("prd")
+    prd_dir = Path(paths.bird)
     if ccd_def:
         return _safe_read_cif(str(prd_dir.joinpath("prd-all.cif.gz")))
     return _safe_read_cif(str(prd_dir.joinpath("prdcc-all.cif.gz")))
