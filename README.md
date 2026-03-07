@@ -121,6 +121,10 @@ paths.prd/
   family/ {N}/FAM_NNNNNN.cif
 ```
 
+## Recommended: mmCIF Syntax Highlighting
+
+If you use VS Code, try [mmCIF Rainbow](https://marketplace.visualstudio.com/items?itemName=N283T.mmcif-rainbow) for color-coded CIF file viewing.
+
 ## Development
 
 ```bash
