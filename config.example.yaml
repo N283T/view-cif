@@ -1,0 +1,30 @@
+# view-cif configuration
+# Copy to ~/.config/view-cif/config.yaml and edit as needed.
+
+# Editor command used to open CIF files.
+# Any terminal command works: code, nvim, vim, emacs, subl, etc.
+editor: code
+
+# Directory for cached CIF output (auto-cleaned on each run).
+cache_dir: ~/.cache/view-cif
+
+# Data paths for local PDB mirror / reference data.
+# Only configure the paths you need.
+paths:
+  # Next-gen PDB archive root
+  # Expected structure: {pdb_next_gen}/entries/divided/{ab}/pdb_{id}/...
+  pdb_next_gen: ""
+
+  # BIRD bulk files directory (contains prd-all.cif.gz, prdcc-all.cif.gz)
+  bird: ""
+
+  # CCD monomers directory (contains components.cif.gz)
+  monomers: ""
+
+  # Chemical component reference data
+  # Expected structure: {chem_comp}/{X}/{ABC}/ABC.cif (nested subdirectories)
+  chem_comp: ""
+
+  # BIRD reference data root for individual lookups
+  # Expected structure: {prd}/prd/, {prd}/prdcc/, {prd}/family/
+  prd: ""
