@@ -94,8 +94,14 @@ def _resolve_bird_individual(cont: str, paths: PathsConfig) -> tuple[str, str]:
         raise SystemExit(
             f"Error: '{cont}' is not a recognized BIRD identifier (PRD_/PRDCC_/FAM_)"
         )
-    search_dir = str(Path(paths.prd).joinpath(subdir))
-    path = _find_cif_file(cont.upper(), search_dir)
+    search_path = Path(paths.prd).joinpath(subdir)
+    if not search_path.is_dir():
+        raise SystemExit(
+            f"Error: BIRD subdirectory not found: {search_path}\n"
+            f"Verify that paths.prd in ~/.config/view-cif/config.yaml "
+            f"points to a directory containing '{subdir}/'."
+        )
+    path = _find_cif_file(cont.upper(), str(search_path))
     return _safe_read_cif(str(path)), cont.upper() + ".cif"
 
 

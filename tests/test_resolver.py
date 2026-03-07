@@ -223,6 +223,12 @@ class TestResolveCif:
         with pytest.raises(SystemExit, match="prd"):
             resolve_cif("PRD_000010", paths)
 
+    @patch("view_cif.resolver.is_pdb_code", return_value=False)
+    def test_resolve_bird_missing_subdir(self, mock_is_pdb, tmp_path: Path):
+        paths = PathsConfig(prd=str(tmp_path))
+        with pytest.raises(SystemExit, match="BIRD subdirectory not found"):
+            resolve_cif("PRD_000010", paths)
+
     # Bulk file tests
     @patch("view_cif.resolver._safe_read_cif")
     @patch("view_cif.resolver.is_pdb_code", return_value=False)
